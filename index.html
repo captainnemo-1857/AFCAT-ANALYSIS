@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFCAT Sortie Log — Pattern Analysis 2021–2026</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">FLIGHT DATA RECORDER · AFCAT QUESTION PAPER ANALYSIS</div>
+    <h1>The AFCAT Sortie Log</h1>
+    <p class="hero-sub">24 papers. 2,394 questions. Feb 2021 → Aug 2026. Every question tagged by subject and topic to show what the exam actually asks — and what it's quietly stopped asking.</p>
+    <div class="hero-stats" id="hero-stats"></div>
+  </div>
+  <div class="flightstrip" id="flightstrip">
+    <div class="flightstrip-label">SUBJECT MIX PER SORTIE — CHRONOLOGICAL</div>
+    <div class="flightstrip-track" id="flightstrip-track"></div>
+    <div class="flightstrip-legend" id="flightstrip-legend"></div>
+  </div>
+</header>
+
+<nav class="jumpnav" id="jumpnav">
+  <a href="#timeline">Timeline</a>
+  <a href="#topics">Topic breakdown</a>
+  <a href="#difficulty">Difficulty</a>
+  <a href="#movers">Rising / falling</a>
+  <a href="#vanished">Vanished</a>
+  <a href="#ladder">Priority ladder</a>
+  <a href="#grid">Session grid</a>
+  <a href="#focus">Focus map</a>
+  <a href="#method">Methodology</a>
+</nav>
+
+<main>
+
+  <section id="timeline" class="panel">
+    <div class="section-head">
+      <span class="section-tag">01</span>
+      <h2>Subject distribution over time</h2>
+      <p class="section-desc">Share of each paper given to English, Maths, Reasoning, and GK — read left to right as the exam's chronology.</p>
+    </div>
+    <div class="chart-wrap tall"><canvas id="chart-timeline" role="img" aria-label="Stacked line chart of subject share per AFCAT paper from 2021 to 2026"></canvas></div>
+  </section>
+
+  <section id="topics" class="panel">
+    <div class="section-head">
+      <span class="section-tag">02</span>
+      <h2>Topic breakdown by subject</h2>
+      <p class="section-desc">Within each subject, which sub-topics actually carry the weight — and how that weight has shifted from the 2021-22 papers to 2025-26.</p>
+    </div>
+    <div class="tabs" id="subject-tabs"></div>
+    <div class="chart-wrap tall"><canvas id="chart-topics" role="img" aria-label="Horizontal bar chart comparing topic share early versus recent papers"></canvas></div>
+  </section>
+
+  <section id="difficulty" class="panel">
+    <div class="section-head">
+      <span class="section-tag">03</span>
+      <h2>Difficulty evolution</h2>
+      <p class="section-desc">A proxy, not a verdict: average question length (characters) per subject, per paper. Longer stems generally mean more to parse under time pressure — more context in the direction line, longer word problems, denser passages. This is not a measure of conceptual hardness.</p>
+    </div>
+    <div class="chart-wrap tall"><canvas id="chart-difficulty" role="img" aria-label="Line chart of average question length per subject across papers"></canvas></div>
+  </section>
+
+  <section id="movers" class="panel">
+    <div class="section-head">
+      <span class="section-tag">04</span>
+      <h2>Rising and falling</h2>
+      <p class="section-desc">Topic share, early era (2021-22) vs recent era (2025-26). Positive means the exam is leaning into it now; negative means it's fading.</p>
+    </div>
+    <div class="movers-grid">
+      <div class="movers-col">
+        <div class="movers-col-head rising">▲ RISING</div>
+        <div id="rising-list"></div>
+      </div>
+      <div class="movers-col">
+        <div class="movers-col-head falling">▼ FALLING</div>
+        <div id="falling-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="vanished" class="panel">
+    <div class="section-head">
+      <span class="section-tag">05</span>
+      <h2>What the papers stopped asking</h2>
+      <p class="section-desc">Topics that had a real presence in early papers (≥1% share) and have all but disappeared from recent ones (&lt;0.3%).</p>
+    </div>
+    <div id="vanished-list" class="vanished-list"></div>
+  </section>
+
+  <section id="ladder" class="panel">
+    <div class="section-head">
+      <span class="section-tag">06</span>
+      <h2>Priority ladder</h2>
+      <p class="section-desc">Every topic ranked by a composite score — 35% overall frequency, 65% recent-era frequency. This is the order to drill in, not the order topics happen to appear in the paper.</p>
+    </div>
+    <div id="ladder-list" class="ladder-list"></div>
+  </section>
+
+  <section id="grid" class="panel">
+    <div class="section-head">
+      <span class="section-tag">07</span>
+      <h2>Session grid</h2>
+      <p class="section-desc">Raw question counts, subject × sortie. Darker cells carry more weight in that paper.</p>
+    </div>
+    <div class="grid-wrap" id="session-grid"></div>
+  </section>
+
+  <section id="focus" class="panel">
+    <div class="section-head">
+      <span class="section-tag">08</span>
+      <h2>Focus here / don't focus here</h2>
+      <p class="section-desc">The blunt version of the priority ladder — where recent papers are actually spending their questions, and where they almost never go.</p>
+    </div>
+    <div class="focus-grid">
+      <div class="focus-col focus-yes">
+        <div class="focus-col-head">FOCUS HERE</div>
+        <div id="focus-yes-list"></div>
+      </div>
+      <div class="focus-col focus-no">
+        <div class="focus-col-head">DON'T BURN TIME HERE</div>
+        <div id="focus-no-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="method" class="panel method-panel">
+    <div class="section-head">
+      <span class="section-tag">09</span>
+      <h2>Methodology &amp; honest limitations</h2>
+    </div>
+    <div class="method-body">
+      <p><strong>Source:</strong> 24 unique papers (22 previous-year memory-based/official reconstructions, 1 compiled solved paper, plus 2 model papers analysed separately) spanning AFCAT 01/2021 through AFCAT 02/2026. Two duplicate files and three redundant compiled-paper duplicates were dropped before analysis.</p>
+      <p><strong>Extraction:</strong> Text pulled directly from each PDF. Two 2025 papers were scanned images and required OCR (Tesseract) — expect a slightly higher error rate there. One 2024 paper had a multi-column layout that scrambled reading order; its four subject sections were recovered reliably from header positions, but individual question boundaries within each section are approximate.</p>
+      <p><strong>Subject and topic tagging:</strong> Done with a rule-based keyword classifier, not by hand and not by an LLM reading every question — this was a deliberate choice to keep the method transparent and auditable rather than a black box. It was calibrated against the one paper with genuine printed section headers (English/Maths/Reasoning/GK), and its output distribution lands within a few percentage points of that ground truth across all four subjects. About 30% of questions fell back to secondary heuristics (structural cues like body length and numeric density) rather than a direct keyword hit — these are individually less reliable, but in aggregate the topic-share trends held up under manual spot-checking of ~150+ questions across the corpus.</p>
+      <p><strong>GK's "Other/Miscellaneous" bucket</strong> stays large deliberately — general awareness questions span an enormous range of one-off facts, and force-fitting them into narrow categories would manufacture false precision.</p>
+      <p><strong>Difficulty proxy</strong> is question length only. It does not account for conceptual difficulty, distractor quality, or actual candidate performance data (which isn't public). Treat the difficulty chart as a read on verbosity/time-pressure, not hardness.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Built for r/AFCAT by a fellow aspirant. Data current through AFCAT 02/2026. Not an official source — cross-check against real papers before betting your prep on it.</p>
+</footer>
+
+<script src="chart.umd.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
